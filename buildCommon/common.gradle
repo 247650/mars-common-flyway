@@ -1,0 +1,233 @@
+def publishType = project.getProperties().get('artifactory.publishType') ?: "snapshot"
+def artifactoryUser = project.getProperties().get('artifactory.username') ?: ""
+def artifactoryPassword = project.getProperties().get('artifactory.password') ?: ""
+def artifactoryUrl = project.getProperties().get('artifactory.contextUrl')
+def artifactoryRepoKey = project.getProperties().get('artifactory.repoKey')
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'war'
+apply plugin: "org.sonarqube"
+apply plugin :"jacoco" 
+
+apply from: "file:${projectDir}/packaging.gradle" //Developers can define packaging requirements in this file.
+apply from: "file:${projectDir}/dependencies.gradle"  //where to define compile and runtime dependencies, pulling from ivy
+
+configurations.all {
+    transitive = true
+	exclude group: 'org.slf4j', module: 'slf4j-over-slf4j'
+}
+
+
+jacocoTestReport {
+    group = "Reporting"
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.destination "${buildDir}\\reports\\coverage"
+    }
+  } 
+
+sourceCompatibility = requiredJavaVersion
+
+war.enabled = false
+jar.enabled = true
+
+defaultTasks 'clean','build'
+
+
+def javaVersion = System.getProperty("java.version")
+def builtBy = System.getProperty("user.name") 
+def dateFormat = java.text.SimpleDateFormat.getDateInstance(
+	java.text.SimpleDateFormat.FULL, java.util.Locale.US)
+dateFormat.applyPattern("yyyyMMddHHmmss")
+def date = new java.util.Date()
+def buildTime = dateFormat.format(date)
+def osName = System.getProperty("os.name")
+def osVer = System.getProperty("os.version")
+def osArch = System.getProperty("os.arch")
+def lib = projectDir.getAbsolutePath() + "/lib"
+
+allprojects {
+        group = project.getProperties().get('group')
+        version = "${project.getProperties().get('currentVersion')}-${publishType.toUpperCase()}"
+}
+
+new ByteArrayOutputStream().withStream { os ->
+	def outputAsString = os.toString()
+	def svnSourceUrl = outputAsString =~ /URL: (.*)/
+	def repo = ""
+	def release = ""
+}
+					
+configurations {
+    compile
+}
+
+Vector deps = new Vector()
+for (sub in project.subprojects) {
+	def nextSub = sub.toString().replace("project ", "").replaceAll("'", "")
+	if (!nextSub.endsWith("externals")) deps.add(nextSub) 
+}
+
+dependencies { 
+    for (dep in deps) compile project(dep) 
+}
+
+compileJava.dependsOn("getLibs", "localizeClasspath")
+
+// The repository stanza should be replaced as below
+repositories {
+    maven {
+        url "${artifactoryUrl}/${artifactoryRepoKey}-${publishType}"
+    }
+}
+
+// Add a new publishing stanza to support sending the builds to Artifactory
+apply plugin: 'maven-publish'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+		artifact jar
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username artifactoryUser
+                password artifactoryPassword
+            }
+            url "${artifactoryUrl}/${artifactoryRepoKey}-${publishType}"
+        }
+    }
+}
+
+//Task for tests that run Out Of Container like easymock, junit
+task testOOC( type: Test) {
+	exclude '**/*IC*'
+}
+
+//Task for test that run In Container like Arquillian
+task testIC( type: Test) {
+	include '**/*IC*'
+}
+
+/*
+ * This task creates arquillian.xml, this file is used by Arquillian test clients in order to deploy the war file in WebLogic
+ * The following environment variables are expected:
+ * 
+ * export WL_ADMIN_URL='t3://hostname:port' //eg WL_ADMIN_URL='t3://localhost:7001'
+ * export WL_ADMIN_USER='weblogic'
+ * export WL_ADMIN_PASSWORD='secret_password'
+ * export WL_SERVER='AdminServer'
+ * export WL_HOME='${WL_PATH}\wlserver_12.1' // eg: WL_HOME='C:\Oracle\Middleware\wlserver_12.1'
+ * 
+ * */
+task createArquillianXml << {
+    String contents = new File( './src/test/resources/arquillian_TEMPLATE.xml' ).getText( 'UTF-8' )
+    contents = contents.replace('WL_ADMIN_URL', System.getenv()['WL_ADMIN_URL'] )
+    contents = contents.replace('WL_ADMIN_USER', System.getenv()['WL_ADMIN_USER'] )
+    contents = contents.replace('WL_ADMIN_PASSWORD', System.getenv()['WL_ADMIN_PASSWORD'] )
+    contents = contents.replace('WL_SERVER', System.getenv()['WL_SERVER'] )
+    contents = contents.replace('WL_HOME', System.getenv()['WL_HOME'] )
+    new File( './src/test/resources/arquillian.xml' ).write( contents, 'UTF-8' )
+}
+
+task getLibs() << { 
+    description = 'Cleans the Lib and Fetches dependencies declared in gradle.dependencies into ./lib'
+    //delete(lib)
+	project.configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
+		String fName = it.file
+		copy {
+			into lib
+			from new File(fName)
+		}
+	}
+}
+
+task localizeClasspath() << {
+	String rootDir = projectDir.getAbsolutePath()
+	File localLib = new File(lib)
+	if (localLib.isDirectory()) {
+		ArrayList origPath = sourceSets.main.compileClasspath.collect()
+		ArrayList origNames = new ArrayList()
+		for (File f : origPath)	origNames.add(f.getName())
+		ArrayList libFiles = localLib.listFiles()
+		ArrayList newPath = new ArrayList()
+		for (File f : origPath) 
+			if (!f.getAbsolutePath().startsWith(rootDir))
+				newPath.add(new File(lib + "/" + f.getName()))
+			else newPath.add(f)
+		ArrayList localAdd = new ArrayList()
+		for (File f : libFiles) {
+			String nextName = f.getName()
+			int position = origNames.indexOf(nextName)
+			if (position < 0 ) localAdd.add(f)
+		}
+		for (File f : localAdd) newPath.add(0, f)
+		sourceSets.main.compileClasspath = project.files(newPath)
+	}
+}
+
+task deleteIvyCache() << {
+    def gradleCache = "${System.properties['user.home']}/.gradle/caches/artifacts-14"
+    if (builtBy.equals("jenkins")) gradleCache = "/var/lib/jenkins/.gradle/caches/artifacts-14"
+    delete(gradleCache)
+    def ivyCache = "${System.properties['user.home']}/.ivy2/cache"
+    if (builtBy.equals("jenkins")) ivyCache = "/var/lib/jenkins/.ivy2/cache"
+    delete(ivyCache)
+	def gradle2Cache = "${System.properties['user.home']}/.gradle/caches/modules-2/files-2.1"
+    if (builtBy.equals("jenkins")) gradle2Cache = "/var/lib/jenkins/.gradle/caches/modules-2/files-2.1"
+    delete(gradle2Cache)	
+}
+
+jarComponents.each { comp ->
+	project.task("jar"+comp.name+"Init", type: Copy, dependsOn: testClasses) {
+		from (sourceSets.main.output.classesDir)
+		into (sourceSets.main.output.classesDir.toString() + "/../" + comp.name + "_jar")
+	}
+}
+
+jarComponents.each { comp ->
+	project.task("jar"+comp.name+"CopyResource", dependsOn: ["jar"+comp.name+"Init"]) << {
+		if (comp.relocate != "") {
+			def relocateList = comp.relocate.split(",")
+			for (String entry : relocateList) {
+				def source = "${projectDir}/" + entry.substring(0, entry.indexOf(":"))
+				def to = "${projectDir}/" + entry.substring(entry.indexOf(":") + 1).replace("main", comp.name + "_jar")
+				copy {
+					from (source)
+					into (to)
+				}
+			}
+		}
+	}
+}
+
+jarComponents.each { comp ->
+	project.task("jar"+comp.name, type: Jar, dependsOn: ["jar"+comp.name+"CopyResource"]) {
+		baseName = comp.name
+		includeEmptyDirs = false
+		extension = "jar"
+		def allPatterns = comp.includes
+		def includeList = allPatterns.split(",")
+		for (String pattern : includeList) {
+			from file(sourceSets.main.output.classesDir.toString() + "/../" + comp.name + "_jar")
+			include(pattern)
+		}
+		def excludeList = comp.excludes.split(",")
+		for (String pattern : excludeList) {
+			from file(sourceSets.main.output.classesDir.toString() + "/../" + comp.name + "_jar")
+			exclude(pattern)
+		}
+		if (comp.customAttribs != null) {
+			attribs += comp.customAttribs
+		}		
+	}
+	jar.dependsOn("jar"+comp.name)
+}
+
+artifacts {
+	jarComponents.each { archives(tasks["jar"+it.name]) } 
+}

@@ -1,0 +1,21 @@
+/*********   Start Customize Packaging Configuration Section    *********/
+/************************************************************************/
+ext {
+jarComponents = [
+    [name: "mars-common-flyway",
+     includes: "**/*",
+     root_binaries: "",
+     lib_binaries: "",
+     webinf_binaries: "",
+     relocate: "src/main/resources/:build/classes/java/main/",
+     excludes:""]
+]
+
+warComponents = []
+
+earComponents = []
+
+externalJars = []
+}
+/************************************************************************/
+/*********      End Custom Packaging Configuration Section      *********/

@@ -1,0 +1,18 @@
+buildscript {
+        def publishType = project.getProperties().get('artifactory.publishType') ?: "snapshot"
+        def artifactoryUrl = project.getProperties().get('artifactory.contextUrl')
+        def artifactoryRepoKey = project.getProperties().get('artifactory.repoKey')
+ 
+        repositories {
+                maven {
+                         url "${artifactoryUrl}/${artifactoryRepoKey}-${publishType}"
+                }
+        }
+        dependencies {
+                // add additional dependencies as needed
+                classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+                classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5")
+        }
+}
+ 
+apply from: "file:${projectDir}/buildCommon/common.gradle"
