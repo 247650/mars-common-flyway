@@ -17,6 +17,5 @@ public class EnableMultiTenancyFlywayMigrationAspect {
 	public Object migrate(ProceedingJoinPoint joinPoint) throws Throwable {
 		flywayMigrationImpl.migrate();
 		return joinPoint.proceed();
-	}	
-
+	}
 }
