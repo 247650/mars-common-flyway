@@ -29,6 +29,9 @@ public class EnableMultiTenancyFlywayMigrationImpl {
 		System.out.println("Inside EnableMultiTenancyFlywayMigrationImpl.migrate() method");
 		multitenantProperties.getDatabases().stream().forEach(dataSource  -> {
 			try {
+				System.out.println("DataSource =>A ===> +" + dataSource.getUrl());
+				System.out.println("DataSource =>A ===> +" + dataSource.getUsername());
+				System.out.println("DataSource =>A ===> +" + dataSource.getPassword());
 				logger.info("Starting flyway migration for locations" + dataSource.getLocations() );
 				Flyway flyway = Flyway
 						.configure()
