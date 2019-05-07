@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-//@Target({ElementType.METHOD})
+//@Target({ElementType.TYPE})
+@Target({ElementType.METHOD})
 @Documented
 @Inherited
 public @interface EnableMultiTenancyFlywayMigration {
