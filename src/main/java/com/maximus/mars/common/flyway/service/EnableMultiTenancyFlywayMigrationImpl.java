@@ -32,18 +32,18 @@ public class EnableMultiTenancyFlywayMigrationImpl {
 				System.out.println("DataSource =>A ===> +" + dataSource.getUrl());
 				System.out.println("DataSource =>A ===> +" + dataSource.getUsername());
 				System.out.println("DataSource =>A ===> +" + dataSource.getPassword());
-				logger.info("Starting flyway migration for locations" + dataSource.getLocations() );
+				logger.info("Starting flyway migration for locations" + dataSource.getLocation() );
 				Flyway flyway = Flyway
 						.configure()
 						.dataSource(dataSource.getUrl(), dataSource.getUsername(), dataSource.getPassword())
 						.baselineOnMigrate(true)
-						.locations(dataSource.getLocations())
+						.locations(dataSource.getLocation())
 						.load();
 				flyway.migrate();
-				logger.info("Finished flyway migration for locations" + dataSource.getLocations() );
+				logger.info("Finished flyway migration for locations" + dataSource.getLocation() );
 			} catch ( Exception e) {
 				e.printStackTrace();
-				logger.info("Error flyway migration for locations" + dataSource.getLocations() );
+				logger.info("Error flyway migration for locations" + dataSource.getLocation() );
 			}
 		});
 		return true;

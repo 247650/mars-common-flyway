@@ -6,7 +6,7 @@ public class Database
     private String url;
     private String username;
     private String password;        
-    private String locations;
+    private String location;
     
 	public String getName() {
 		return name;
@@ -32,10 +32,10 @@ public class Database
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getLocations() {
-		return locations;
+	public String getLocation() {
+		return location;
 	}
-	public void setLocations(String locations) {
-		this.locations = locations;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 }

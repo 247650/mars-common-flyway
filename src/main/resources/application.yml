@@ -5,10 +5,10 @@ mars:
     url: jdbc:mysql://127.0.0.1:3306/tx
     username: root
     password: 21July2017
-    locations: db\migration
+    location: db/migration
   - database:
     name: LA
     url: jdbc:mysql://127.0.0.1:3306/la
     username: root
     password: 21July2017
-    locations: db\migration
+    location: db/migration
