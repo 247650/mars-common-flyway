@@ -36,6 +36,6 @@ public class FlywayBootMain
 	
 	@PostConstruct
 	private void excute() {
-		flywayService.testflyway();
+		flywayService.migrate();
 	}
 }

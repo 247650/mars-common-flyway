@@ -2,17 +2,17 @@ package com.maximus.mars.common.flyway.util;
 
 public class Database
 {
-	private String name;
+	private String key;
     private String url;
     private String username;
     private String password;        
     private String location;
     
 	public String getName() {
-		return name;
+		return key;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String key) {
+		this.key = key;
 	}
 	public String getUrl() {
 		return url;

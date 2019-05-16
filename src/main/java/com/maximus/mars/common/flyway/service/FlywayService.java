@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class FlywayService 
 {
 	@EnableMultiTenancyFlywayMigration
-	public void testflyway()
+	public void migrate()
 	{
 		System.out.println("In Flyway test method");
 	}

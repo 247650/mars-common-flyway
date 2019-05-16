@@ -1,14 +1,14 @@
-mars:
-  databases:
-  - database:
-    name: TX
-    url: jdbc:mysql://127.0.0.1:3306/tx
-    username: root
-    password: 21July2017
-    location: db/migration
-  - database:
-    name: LA
-    url: jdbc:mysql://127.0.0.1:3306/la
-    username: root
-    password: 21July2017
-    location: db/migration
+#mars:
+#  databases:
+#  - database:
+#    key: TX
+#    url: jdbc:mysql://127.0.0.1:3306/flyway_schema_1
+#    username: root
+#    password: root
+#    location: db/migration
+#  - database:
+#    key: LA
+#    url: jdbc:mysql://127.0.0.1:3306/flyway_schema_2
+#    username: root
+#    password: root
+#    location: db/migration

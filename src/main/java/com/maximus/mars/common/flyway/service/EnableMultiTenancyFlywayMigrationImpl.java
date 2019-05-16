@@ -40,6 +40,7 @@ public class EnableMultiTenancyFlywayMigrationImpl {
 						.locations(dataSource.getLocation())
 						.load();
 				flyway.migrate();
+				logger.info("Flyway migration information "+flyway.info());
 				logger.info("Finished flyway migration for locations" + dataSource.getLocation() );
 			} catch ( Exception e) {
 				e.printStackTrace();
