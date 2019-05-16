@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.maximus.mars.common.flyway.service.EnableMultiTenancyFlywayMigration;
 import com.maximus.mars.common.flyway.service.FlywayService;
 
 /**
