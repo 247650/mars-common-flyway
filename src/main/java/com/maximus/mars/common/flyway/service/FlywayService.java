@@ -9,10 +9,17 @@ public class FlywayService
 {
 	private final Log logger = LogFactory.getLog(getClass());
 	
+<<<<<<< HEAD
 	
+=======
+>>>>>>> develop
 	@EnableMultiTenancyFlywayMigration
 	public void migrate()
 	{
+<<<<<<< HEAD
 		logger.info("In Flyway migrate method");
+=======
+		logger.info("flyway is started.");
+>>>>>>> develop
 	}
 }
