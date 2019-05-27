@@ -5,21 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FlywayService 
-{
+public class FlywayService {
 	private final Log logger = LogFactory.getLog(getClass());
-	
-<<<<<<< HEAD
-	
-=======
->>>>>>> develop
+
 	@EnableMultiTenancyFlywayMigration
-	public void migrate()
-	{
-<<<<<<< HEAD
+	public void migrate() {
+
 		logger.info("In Flyway migrate method");
-=======
-		logger.info("flyway is started.");
->>>>>>> develop
 	}
 }
