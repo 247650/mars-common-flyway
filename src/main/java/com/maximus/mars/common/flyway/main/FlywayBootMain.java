@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.maximus.mars.common.flyway.service.EnableMultiTenancyFlywayMigration;
 import com.maximus.mars.common.flyway.service.FlywayService;
 
 /**
@@ -23,14 +22,12 @@ import com.maximus.mars.common.flyway.service.FlywayService;
 @ComponentScan("com.maximus.mars.common.flyway")
 @EnableConfigurationProperties
 public class FlywayBootMain 
-{
+{	
 	@Autowired
 	FlywayService flywayService;
-	
-	
+
 	public static void main(String[] args) 
 	{
-		System.out.println("Starting Flyway");
 		SpringApplication.run(FlywayBootMain.class, args);
 	}
 	

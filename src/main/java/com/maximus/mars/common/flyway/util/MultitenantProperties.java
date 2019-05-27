@@ -15,11 +15,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "mars")
-public class MultitenantProperties 
-{
+public class MultitenantProperties {
 	private List<Database> databases = new ArrayList<>();
-	
-	
 
 	public List<Database> getDatabases() {
 		return databases;
@@ -29,5 +26,3 @@ public class MultitenantProperties
 		this.databases = databases;
 	}
 }
-
-
