@@ -23,7 +23,7 @@ public class EnableMultiTenancyFlywayMigrationImpl {
 	}
 
 	public boolean migrate() {
-		multitenantProperties.getDatabases().stream().forEach(dataSource -> {
+		multitenantProperties.getDatasources().stream().forEach(dataSource -> {
 			try {
 				logger.info("Starting flyway migration for locations" + dataSource.getLocation());
 				Flyway flyway = Flyway.configure()

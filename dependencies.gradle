@@ -17,7 +17,7 @@ dependencies {
     compile("io.pivotal.spring.cloud:spring-cloud-services-dependencies:2.0.1.RELEASE")
     
     //compile group: 'org.apache.tomcat', name: 'tomcat-jdbc', version: '8.0.15' 
-    compile 'mysql:mysql-connector-java:8.0.13'
+    runtime 'mysql:mysql-connector-java:8.0.13'
     
     runtime 'org.flywaydb:flyway-gradle-plugin:5.2.4'
 }

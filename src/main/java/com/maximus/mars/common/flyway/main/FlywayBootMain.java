@@ -8,19 +8,21 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.maximus.mars.common.flyway.service.FlywayService;
+import com.maximus.mars.common.flyway.util.MultitenantProperties;
 
 /**
  * @author 80759
  *
  */
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @ComponentScan("com.maximus.mars.common.flyway")
-@EnableConfigurationProperties
+@EnableConfigurationProperties(MultitenantProperties.class)
 public class FlywayBootMain 
 {	
 	@Autowired

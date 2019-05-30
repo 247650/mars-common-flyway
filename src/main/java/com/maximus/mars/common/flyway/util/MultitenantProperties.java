@@ -6,6 +6,8 @@ package com.maximus.mars.common.flyway.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -14,15 +16,18 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-@ConfigurationProperties(prefix = "mars")
+@ConfigurationProperties(prefix = "mars.mutitenancy")
 public class MultitenantProperties {
-	private List<Database> databases = new ArrayList<>();
+	private final Log logger = LogFactory.getLog(getClass());
+	private List<Database> datasources = new ArrayList<>();
 
-	public List<Database> getDatabases() {
-		return databases;
+	public List<Database> getDatasources() {
+		return datasources;
 	}
 
-	public void setDatabases(List<Database> databases) {
-		this.databases = databases;
+	public void setDatasources(List<Database> datasources) {
+		this.datasources = datasources;
 	}
+
+	
 }
