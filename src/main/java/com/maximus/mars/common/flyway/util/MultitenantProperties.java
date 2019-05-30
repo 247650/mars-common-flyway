@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-@ConfigurationProperties(prefix = "mars.mutitenancy")
+@ConfigurationProperties(prefix = "mars.multitenant")
 public class MultitenantProperties {
 	private final Log logger = LogFactory.getLog(getClass());
 	private List<Database> datasources = new ArrayList<>();
