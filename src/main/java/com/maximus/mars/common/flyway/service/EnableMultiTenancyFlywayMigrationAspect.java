@@ -14,8 +14,7 @@ public class EnableMultiTenancyFlywayMigrationAspect {
 	EnableMultiTenancyFlywayMigrationImpl flywayMigrationImpl;
 
 	@Around("@annotation(EnableMultiTenancyFlywayMigration)")
-	public Object migrate(ProceedingJoinPoint joinPoint) throws Throwable {
+	public void migrate(ProceedingJoinPoint joinPoint)     {
 		flywayMigrationImpl.migrate();
-		return joinPoint.proceed();
 	}
 }

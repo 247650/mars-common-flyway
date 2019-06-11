@@ -6,8 +6,6 @@ package com.maximus.mars.common.flyway.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "mars.multitenant")
 public class MultitenantProperties {
-	private final Log logger = LogFactory.getLog(getClass());
 	private List<Database> datasources = new ArrayList<>();
 
 	public List<Database> getDatasources() {
