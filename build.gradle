@@ -3,11 +3,16 @@ buildscript {
         def artifactoryUrl = project.getProperties().get('artifactory.contextUrl')
         def artifactoryRepoKey = project.getProperties().get('artifactory.repoKey')
  
-        repositories {
-                maven {
-                         url "${artifactoryUrl}/${artifactoryRepoKey}-${publishType}"
-                }
-        }
+          repositories {
+	      mavenLocal()
+	      maven {
+	      url "${this.getProperty('artifactory.contextUrl')}/${this.getProperty('artifactory.repoKey')}-${publishType}"
+				credentials {
+				username = artifactoryUser
+				password = artifactoryPassword
+				}
+		  }                
+	  }
         dependencies {
                 // add additional dependencies as needed
                 classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
