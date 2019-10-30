@@ -10,7 +10,7 @@ apply plugin: 'idea'
 apply plugin: 'war'
 apply plugin: "org.sonarqube"
 apply plugin :"jacoco" 
-
+apply plugin: "com.jfrog.artifactory"
 apply from: "file:${projectDir}/packaging.gradle" //Developers can define packaging requirements in this file.
 apply from: "file:${projectDir}/dependencies.gradle"  //where to define compile and runtime dependencies, pulling from ivy
 
@@ -101,6 +101,20 @@ publishing {
             url "${artifactoryUrl}/${artifactoryRepoKey}-${publishType}"
         }
     }
+    artifactory {
+    contextUrl = "${this.getProperty('artifactory.contextUrl')}"
+    publish {
+        repository {
+            repoKey = "${this.getProperty('artifactory.repoKey')}-${this.getProperty('artifactory.publishType')}-local"
+            username = artifactoryUser
+            password = artifactoryPassword
+            maven = true
+        }
+        defaults {
+            publications ('mavenJava')
+        }
+    }  
+}
 }
 
 //Task for tests that run Out Of Container like easymock, junit
