@@ -18,5 +18,4 @@ config.pipeline.stages.checkout.branch = 'master'
 
 // publish config
 config.pipeline.stages.publish.gradle = [tasks: ['publish']]           // no special handling for your library
-config.pipeline.stages.publish.gradle = [tasks: ['bootJar artifactoryPublish']]
 ciPipeline(config)
