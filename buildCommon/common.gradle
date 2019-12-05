@@ -101,7 +101,9 @@ publishing {
             url "${artifactoryUrl}/${artifactoryRepoKey}-${publishType}"
         }
     }
-    artifactory {
+}
+
+artifactory {
     contextUrl = "${this.getProperty('artifactory.contextUrl')}"
     publish {
         repository {
@@ -114,7 +116,6 @@ publishing {
             publications ('mavenJava')
         }
     }  
-}
 }
 
 //Task for tests that run Out Of Container like easymock, junit
