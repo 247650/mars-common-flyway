@@ -7,6 +7,7 @@ public class Database
     private String username;
     private String password;        
     private String location;
+    private String secret;
     
 	public String getName() {
 		return key;
@@ -37,5 +38,13 @@ public class Database
 	}
 	public void setLocation(String location) {
 		this.location = location;
+	}
+	
+	public String getSecret() {
+		return secret;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
 	}
 }
