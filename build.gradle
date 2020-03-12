@@ -1,15 +1,14 @@
 buildscript {
-        def publishType = this.getProperties().get('artifactory.publishType') ?: "snapshot"
         def artifactoryUser = this.getProperty('artifactory.username') ?: ""
         def artifactoryPassword = this.getProperty('artifactory.password') ?: ""
- 
-          repositories {
+         
+        repositories {
 	      mavenLocal()
 	      maven {
-	      url "${this.getProperty('artifactory.contextUrl')}/${this.getProperty('artifactory.repoKey')}-${publishType}"
+	      url "${this.getProperty('artifactory.contextUrl')}/${this.getProperty('artifactory.repoKey')}"
 				credentials {
-				username = artifactoryUser
-				password = artifactoryPassword
+					username = artifactoryUser
+					password = artifactoryPassword
 				}
 		  }                
 	  }

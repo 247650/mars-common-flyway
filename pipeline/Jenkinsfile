@@ -1,21 +1,13 @@
 def config = generateConfig()
 
-// Artifactory publish configuration
-config.project.defaults.artifactory = [
-  credentialsId: 'artifactory_docker',
-  publishRepository: 'https://artifactory.mars.pcf-maximus.com/artifactory/api/npm/mars-gradle-snapshot/',
-  email: 'jenkins@pcf-maximus.com'
-]
-
-// Set up repository for manual build button presses
-config.pipeline.stages.checkout.url = 'https://git-codecommit.us-west-2.amazonaws.com/v1/repos/mars-common-flyway'
+config.project.defaults.artifactory.credentialsId = 'artifactory-docker'
 config.pipeline.stages.checkout.credentialsId = 'codecommit-service-account-id'
-config.pipeline.stages.checkout.branch = 'integration'
 
-// disable unit tests only if the pipeline breaks during run...
-// and then fix your tests
-// config.pipeline.stages.unitTest.enabled = false
+config.pipeline.stages.checkout.command = { checkout scm }
 
-// publish config
-config.pipeline.stages.publish.gradle = [tasks: ['publish']]           // no special handling for your library
+config.pipeline.stages.publish.gradle = [tasks: ['build', 'artifactoryPublish']]
+
+config.pipeline.stages.unitTest.enabled = false
+config.pipeline.stages.quality.enabled = false
+config.pipeline.stages.build.toolName = "gradle-6"
 ciPipeline(config)

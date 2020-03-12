@@ -1,25 +1,23 @@
-def publishType = project.getProperties().get('artifactory.publishType') ?: "snapshot"
 def artifactoryUser = project.getProperties().get('artifactory.username') ?: ""
 def artifactoryPassword = project.getProperties().get('artifactory.password') ?: ""
-
 def artifactoryUrl = project.getProperties().get('artifactory.contextUrl')
 def artifactoryRepoKey = project.getProperties().get('artifactory.repoKey')
+
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: "org.sonarqube"
-apply plugin :"jacoco" 
-apply plugin: "com.jfrog.artifactory"
+apply plugin: 'org.sonarqube'
+apply plugin: 'jacoco' 
+apply plugin: 'com.jfrog.artifactory'
+
+
 
 apply from: "file:${projectDir}/packaging.gradle" //Developers can define packaging requirements in this file.
 apply from: "file:${projectDir}/dependencies.gradle"  //where to define compile and runtime dependencies, pulling from ivy
 
-configurations.all {
-    transitive = true
-	exclude group: 'org.slf4j', module: 'slf4j-over-slf4j'
-}
-
+group = project.getProperties().get('group')
+version = "${this.getProperty('currentVersion')}"
 
 jacocoTestReport {
     group = "Reporting"
@@ -28,13 +26,23 @@ jacocoTestReport {
         csv.enabled false
         html.destination file("${buildDir}\\reports\\coverage")
     }
-  } 
+} 
+
+test.finalizedBy jacocoTestReport
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
 
 sourceCompatibility = requiredJavaVersion
+
 
 jar.enabled = true
 
 defaultTasks 'clean','build'
+
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
@@ -46,28 +54,23 @@ task javadocJar(type: Jar) {
     classifier = 'javadoc'
 }
 
-group = project.getProperties().get('group')
-version = "${project.getProperties().get('currentVersion')}-${publishType.toUpperCase()}"
-
-
+// The repository stanza should be replaced as below
 repositories {
-	mavenLocal()
+    mavenLocal()
     maven {
-        url "${artifactoryUrl}/${artifactoryRepoKey}-${publishType}"
-    }
-    maven {
-        url "${artifactoryUrl}/${artifactoryRepoKey}-release"
+        url "${artifactoryUrl}/${artifactoryRepoKey}"
     }
 }
 
-// Add a new publishing stanza to support sending the builds to Artifactory
+
 apply plugin: 'maven-publish'
+// Add a new publishing stanza to support sending the builds to Artifactory
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+                        from components.java
  			artifact sourcesJar
-            artifact javadocJar            
+            artifact javadocJar           
         }
     }
     repositories {
@@ -76,22 +79,32 @@ publishing {
                 username artifactoryUser
                 password artifactoryPassword
             }
-            url "${artifactoryUrl}/${artifactoryRepoKey}-${publishType}"
+            url "${artifactoryUrl}/${artifactoryRepoKey}"
         }
     }
 }
 
+
+
 artifactory {
-    contextUrl = "${this.getProperty('artifactory.contextUrl')}"
-    publish {
-        repository {
-            repoKey = "${this.getProperty('artifactory.repoKey')}-${this.getProperty('artifactory.publishType')}-local"
-            username = artifactoryUser
-            password = artifactoryPassword
-            maven = true
-        }
-        defaults {
-            publications ('mavenJava')
-        }
-    }  
+     contextUrl = "${this.getProperty('artifactory.contextUrl')}"
+     publish {
+         repository {
+             repoKey = "${this.getProperty('artifactory.repoKey')}"
+             username = artifactoryUser
+             password = artifactoryPassword
+             maven = true
+         }
+         defaults {
+             publications ('mavenJava')
+         }
+     }  
+ }
+
+task getAnnotationProcessor(type: Copy) {
+  from configurations.annotationProcessor
+  into file("$buildDir/archive")
 }
+
+build.finalizedBy(getAnnotationProcessor)
+
