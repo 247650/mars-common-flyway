@@ -5,8 +5,8 @@ def artifactoryRepoKey = project.getProperties().get('artifactory.repoKey')
 
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
+//apply plugin: 'eclipse'
+//apply plugin: 'idea'
 apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco' 
 apply plugin: 'com.jfrog.artifactory'
