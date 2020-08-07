@@ -32,10 +32,10 @@ public class EnableMultiTenancyFlywayMigrationImpl {
 	public boolean migrate() {
 		multitenantProperties.getDatasources().stream().forEach(dataSource -> {
 			try {
-				logger.info("Starting flyway migration for locations" + dataSource.getLocation());
+				logger.info("Starting flyway migration for locations {}" , dataSource.getLocation());
 				
 				if(dataSource.getSecret() != null ) {
-					logger.info("getting the password from credential service	 using key "+dataSource.getSecret());
+					logger.info("getting the password from credential service	 using key {}" , dataSource.getSecret());
 					MarsDBSecret marsDBSecret =  credentialService.getCachedSecret(dataSource.getSecret(),false, MarsDBSecret.class);
 					dataSource.setUsername(marsDBSecret.getUsername());
 					dataSource.setPassword(marsDBSecret.getPassword());					
@@ -51,10 +51,10 @@ public class EnableMultiTenancyFlywayMigrationImpl {
 				flyway.repair();
 				logger.info("Migrating  ");
 				flyway.migrate();
-				logger.info("Flyway migration information " + flyway.info());
-				logger.info("Finished flyway migration for locations" + dataSource.getLocation());
+				logger.info("Flyway migration information {}" , flyway.info());
+				logger.info("Finished flyway migration for locations {}" , dataSource.getLocation());
 			} catch (Exception e) {
-				logger.error("Error flyway migration for locations :" + dataSource.getLocation(),e);
+				logger.error("Error flyway migration for locations : {} " , dataSource.getLocation(),e);
 			}
 		});
 		return true;
