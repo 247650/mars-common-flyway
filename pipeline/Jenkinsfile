@@ -7,7 +7,7 @@ config.pipeline.stages.checkout.command = { checkout scm }
 
 config.pipeline.stages.publish.gradle = [tasks: ['build', 'artifactoryPublish']]
 
-config.pipeline.stages.unitTest.enabled = false
-config.pipeline.stages.quality.enabled = false
+config.pipeline.stages.unitTest.enabled = true
+config.pipeline.stages.quality.enabled = true
 config.pipeline.stages.build.toolName = "gradle-6"
 ciPipeline(config)
