@@ -23,7 +23,7 @@ public class EnableMultiTenancyFlywayMigrationImpl {
 
 	private CredentialsService credentialService;
 
-	@Value("${mars.flyway.outOfOrder:false}")
+	@Value("${mars.flyway.out-of-order:false}")
 	private Boolean outOfOrder;
 
 	@Autowired
