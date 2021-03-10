@@ -9,5 +9,7 @@ config.pipeline.stages.publish.gradle = [tasks: ['build', 'artifactoryPublish']]
 
 config.pipeline.stages.unitTest.enabled = true
 config.pipeline.stages.quality.enabled = true
+config.pipeline.stages.autoVersion.enabled = false
+
 config.pipeline.stages.build.toolName = "gradle-6"
 ciPipeline(config)
